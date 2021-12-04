@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <Group
+      location = "container:"
+      name = "AoC_2021">
+      <FileRef
+         location = "group:AoC_4/AoC_4.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:AoC_1/AoC_1.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:AoC_2/AoC_2.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:AoC_3/AoC_3.xcodeproj">
+      </FileRef>
+   </Group>
+</Workspace>

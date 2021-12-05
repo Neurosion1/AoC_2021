@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EE11265A275C746D0051FA88 /* AoC_5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE112659275C746D0051FA88 /* AoC_5.cpp */; };
 		EE112663275C81DE0051FA88 /* AoC_5_input.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE112662275C81DA0051FA88 /* AoC_5_input.dat */; };
+		EE93606A275D304100C73F3D /* AoC_5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE936069275D304100C73F3D /* AoC_5.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +26,8 @@
 
 /* Begin PBXFileReference section */
 		EE112656275C746D0051FA88 /* AoC_5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AoC_5; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE112659275C746D0051FA88 /* AoC_5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AoC_5.cpp; sourceTree = "<group>"; };
-		EE112662275C81DA0051FA88 /* AoC_5_input.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = AoC_5_input.dat; sourceTree = SOURCE_ROOT; };
+		EE112662275C81DA0051FA88 /* AoC_5_input.dat */ = {isa = PBXFileReference; lastKnownFileType = text; path = AoC_5_input.dat; sourceTree = SOURCE_ROOT; };
+		EE936069275D304100C73F3D /* AoC_5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AoC_5.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,8 @@
 		EE11264D275C746D0051FA88 = {
 			isa = PBXGroup;
 			children = (
-				EE112658275C746D0051FA88 /* AoC_5 */,
+				EE936069275D304100C73F3D /* AoC_5.cpp */,
+				EE112662275C81DA0051FA88 /* AoC_5_input.dat */,
 				EE112657275C746D0051FA88 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,15 +56,6 @@
 				EE112656275C746D0051FA88 /* AoC_5 */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		EE112658275C746D0051FA88 /* AoC_5 */ = {
-			isa = PBXGroup;
-			children = (
-				EE112662275C81DA0051FA88 /* AoC_5_input.dat */,
-				EE112659275C746D0051FA88 /* AoC_5.cpp */,
-			);
-			path = AoC_5;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -123,7 +115,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE11265A275C746D0051FA88 /* AoC_5.cpp in Sources */,
+				EE93606A275D304100C73F3D /* AoC_5.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

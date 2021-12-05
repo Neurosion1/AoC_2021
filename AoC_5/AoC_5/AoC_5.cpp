@@ -5,14 +5,14 @@
 #include <vector>
 #include <array>
 
-typedef std::pair<std::pair<int, int>, std::pair<int, int>> Coordinates;
-
 namespace
 {
+  typedef std::pair<std::pair<int, int>, std::pair<int, int>> Coordinates;
+
   void process_file(std::ifstream& input, std::vector<Coordinates>& coordinates)
   {
     char c;
-    char arrow[5];
+    std::string arrow;
     int x1, x2, y1, y2;
     while (!input.eof()) {
       input >> x1 >> c >> y1 >> arrow >> x2 >> c >> y2;
@@ -20,39 +20,21 @@ namespace
     };
   }
 
-  int countIntersections(const std::vector<Coordinates> coordinates, bool count_diagonals)
+  int countIntersections(const std::vector<Coordinates>& coordinates, bool count_diagonals)
   {
-    std::array<int, 1000> oneLine;
-    oneLine.fill(0);
-    std::array<std::array<int, 1000>, 1000> grid;
-    grid.fill(oneLine);
+    std::array<std::array<int, 1000>, 1000> grid = { };
     
     int intersectionCount = 0;
     for (auto coord : coordinates) {
-      int first_x = coord.first.first, first_y = coord.first.second;
-      int last_x = coord.second.first, last_y = coord.second.second;
-      if (coord.first.first == coord.second.first) {
-        for (int y = first_y;
-             first_y < last_y ? y <= last_y : y >= last_y;
-             first_y < last_y ? ++y : --y) {
-          if (grid[coord.first.first][y]++ == 1) {
-            ++intersectionCount;
-          }
-        }
-      }
-      else if (coord.first.second == coord.second.second) {
-        for (int x = first_x;
-             first_x < last_x ? x <= last_x : x >= last_x;
-             first_x < last_x ? ++x : --x) {
-          if (grid[x][coord.first.second]++ == 1) {
-            ++intersectionCount;
-          }
-        }
-      }
-      else if (count_diagonals) {
+      if (count_diagonals || coord.first.first == coord.second.first || coord.first.second == coord.second.second) {
+        int first_x = coord.first.first, first_y = coord.first.second;
+        int last_x = coord.second.first, last_y = coord.second.second;
+        int delta_x = first_x < last_x ? 1 : first_x > last_x ? -1 : 0;
+        int delta_y = first_y < last_y ? 1 : first_y > last_y ? -1 : 0;
         for (int x = first_x, y = first_y;
-             first_x < last_x ? x <= last_x : x >= last_x;
-             first_x < last_x ? ++x : --x, first_y < last_y ? ++y : --y) {
+             (delta_x > 0 ? x <= last_x : x >= last_x) &&
+             (delta_y > 0 ? y <= last_y : y >= last_y);
+             x += delta_x, y += delta_y) {
           if (grid[x][y]++ == 1) {
             ++intersectionCount;
           }
@@ -63,6 +45,7 @@ namespace
     return intersectionCount;
   }
 }
+
 int main()
 {
   std::ifstream input("AoC_5_input.dat");

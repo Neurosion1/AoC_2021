@@ -70,7 +70,6 @@ namespace
     
     return answer;
   }
-}
 #else
   // NOTE: Saw someone mention std::rotate<>() on reddit, which inspired
   //       this lovely solution.
@@ -87,6 +86,7 @@ namespace
     return std::accumulate(fishcount.begin(), fishcount.end(), 0ll);
   }
 #endif
+}
 
 int main()
 {

@@ -14,7 +14,7 @@
          location = "group:AoC_4/AoC_4.xcodeproj">
       </FileRef>
       <FileRef
-         location = "absolute:/Users/neurosion/Documents/GitHub/AoC_2021/AoC_4/../AoC_3/AoC_3.xcodeproj">
+         location = "group:AoC_3/AoC_3.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:AoC_2/AoC_2.xcodeproj">

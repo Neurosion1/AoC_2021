@@ -5,6 +5,8 @@
 #include <vector>
 #include <array>
 #include <list>
+#include <algorithm>
+#include <numeric>
 
 namespace
 {
@@ -44,6 +46,7 @@ namespace
     return fishlist.size();
   }
 
+#if 0
   long long mathFishAfterDays(Fishlist fishlist, int days)
   {
     std::array<long long, 9> fishcount = {};
@@ -68,6 +71,22 @@ namespace
     return answer;
   }
 }
+#else
+  // NOTE: Saw someone mention std::rotate<>() on reddit, which inspired
+  //       this lovely solution.
+  long long mathFishAfterDays(Fishlist fishlist, int days)
+  {
+    std::array<long long, 9> fishcount = {};
+    std::for_each(fishlist.begin(), fishlist.end(), [&fishcount](auto fish) { ++fishcount[fish]; });
+
+    for (int day = 0; day < days; ++day) {
+      std::rotate(fishcount.begin(), fishcount.begin() + 1, fishcount.end());
+      fishcount[6] += fishcount[8];
+    }
+
+    return std::accumulate(fishcount.begin(), fishcount.end(), 0ll);
+  }
+#endif
 
 int main()
 {

@@ -29,8 +29,8 @@ namespace
   {
     long total_fuel_constant = 0;
     long total_fuel_increase = 0;
-    for (int i = 0; i < crablist.size(); ++i) {
-      unsigned int distance = std::abs(crablist[i] - position);
+    for (auto crab : crablist) {
+      unsigned int distance = std::abs(crab - position);
       total_fuel_constant += distance;
       total_fuel_increase += (distance * (distance + 1)) / 2;
     }
@@ -49,12 +49,11 @@ int main()
   Crablist crablist;
   process_file(input, crablist);
   
-  int min_position = *std::min_element(crablist.begin(), crablist.end());
-  int max_position = *std::max_element(crablist.begin(), crablist.end());
+  auto minmax_position = std::minmax_element(crablist.begin(), crablist.end());
   
   long min_fuel_constant = LONG_MAX;
   long min_fuel_increase = LONG_MAX;
-  for (int i = min_position; i != max_position; ++i) {
+  for (int i = *minmax_position.first; i != *minmax_position.second; ++i) {
     auto fuel_costs = calculate_fuel(crablist, i);
     min_fuel_constant = std::min(min_fuel_constant, fuel_costs.first);
     min_fuel_increase = std::min(min_fuel_increase, fuel_costs.second);

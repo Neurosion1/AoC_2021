@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <numeric>
 
+#define REDDIT_SOLUTION 0
+
 namespace
 {
   typedef std::vector<int> Crablist;
@@ -25,6 +27,7 @@ namespace
     };
   }
 
+#if !REDDIT_SOLUTION
   std::pair<long, long> calculate_fuel(const Crablist& crablist, int position)
   {
     long total_fuel_constant = 0;
@@ -36,6 +39,7 @@ namespace
     }
     return std::make_pair(total_fuel_constant, total_fuel_increase);
   }
+#endif
 }
 
 int main()
@@ -49,18 +53,34 @@ int main()
   Crablist crablist;
   process_file(input, crablist);
   
-  auto minmax_position = std::minmax_element(crablist.begin(), crablist.end());
-  
+#if REDDIT_SOLUTION
+  // Another fascinating reddit observation. The ideal position for
+  // part one is always the median. The ideal position for part two
+  // is always the mean.
+  std::sort(crablist.begin(), crablist.end());
+  int part_1_position = crablist[crablist.size() / 2];
+  int part_2_position = std::accumulate(crablist.begin(), crablist.end(), 0l)  / crablist.size();
+
+  long min_fuel_constant = 0;
+  long min_fuel_increase = 0;
+  for (auto crab : crablist) {
+    min_fuel_constant += std::abs(crab - part_1_position);
+    unsigned int part_2_distance = std::abs(crab - part_2_position);
+    min_fuel_increase += (part_2_distance * (part_2_distance + 1)) / 2;
+  }
+#else
   long min_fuel_constant = LONG_MAX;
   long min_fuel_increase = LONG_MAX;
+  auto minmax_position = std::minmax_element(crablist.begin(), crablist.end());
   for (int i = *minmax_position.first; i != *minmax_position.second; ++i) {
     auto fuel_costs = calculate_fuel(crablist, i);
     min_fuel_constant = std::min(min_fuel_constant, fuel_costs.first);
     min_fuel_increase = std::min(min_fuel_increase, fuel_costs.second);
-  }
-  
+}
+#endif
+    
   std::cout << "Part One: " << min_fuel_constant << std::endl;
   std::cout << "Part Two: " << min_fuel_increase << std::endl;
-  
+
   return 0;
 }

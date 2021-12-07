@@ -37,7 +37,7 @@ namespace
         }
         nextBoard[x] = nextLine;
       }
-      boards.push_back(nextBoard);
+      boards.emplace_back(nextBoard);
     };
   }
 

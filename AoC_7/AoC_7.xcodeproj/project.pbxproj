@@ -7,29 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EE936091275D320D00C73F3D /* AoC_6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE936090275D320D00C73F3D /* AoC_6.cpp */; };
+		EE3C5B93275EF66600889446 /* AoC_7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE3C5B92275EF66600889446 /* AoC_7.cpp */; };
+		EE3C5B9D275EF70D00889446 /* AoC_7_input.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE3C5B9C275EF70600889446 /* AoC_7_input.dat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		EE936084275D31C500C73F3D /* CopyFiles */ = {
+		EE3C5B8D275EF66600889446 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				EE3C5B9D275EF70D00889446 /* AoC_7_input.dat in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		EE3C5B9B275EF6AB00889446 /* AoC_6_input.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AoC_6_input.dat; sourceTree = "<group>"; };
-		EE936086275D31C500C73F3D /* AoC_6 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AoC_6; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE936090275D320D00C73F3D /* AoC_6.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AoC_6.cpp; sourceTree = "<group>"; };
+		EE3C5B8F275EF66600889446 /* AoC_7 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AoC_7; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE3C5B92275EF66600889446 /* AoC_7.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AoC_7.cpp; sourceTree = "<group>"; };
+		EE3C5B9C275EF70600889446 /* AoC_7_input.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AoC_7_input.dat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		EE936083275D31C500C73F3D /* Frameworks */ = {
+		EE3C5B8C275EF66600889446 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -39,19 +41,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		EE93607D275D31C500C73F3D = {
+		EE3C5B86275EF66600889446 = {
 			isa = PBXGroup;
 			children = (
-				EE3C5B9B275EF6AB00889446 /* AoC_6_input.dat */,
-				EE936090275D320D00C73F3D /* AoC_6.cpp */,
-				EE936087275D31C500C73F3D /* Products */,
+				EE3C5B9C275EF70600889446 /* AoC_7_input.dat */,
+				EE3C5B92275EF66600889446 /* AoC_7.cpp */,
+				EE3C5B90275EF66600889446 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		EE936087275D31C500C73F3D /* Products */ = {
+		EE3C5B90275EF66600889446 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EE936086275D31C500C73F3D /* AoC_6 */,
+				EE3C5B8F275EF66600889446 /* AoC_7 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -59,38 +61,38 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EE936085275D31C500C73F3D /* AoC_6 */ = {
+		EE3C5B8E275EF66600889446 /* AoC_7 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EE93608D275D31C500C73F3D /* Build configuration list for PBXNativeTarget "AoC_6" */;
+			buildConfigurationList = EE3C5B96275EF66600889446 /* Build configuration list for PBXNativeTarget "AoC_7" */;
 			buildPhases = (
-				EE936082275D31C500C73F3D /* Sources */,
-				EE936083275D31C500C73F3D /* Frameworks */,
-				EE936084275D31C500C73F3D /* CopyFiles */,
+				EE3C5B8B275EF66600889446 /* Sources */,
+				EE3C5B8C275EF66600889446 /* Frameworks */,
+				EE3C5B8D275EF66600889446 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = AoC_6;
-			productName = AoC_6;
-			productReference = EE936086275D31C500C73F3D /* AoC_6 */;
+			name = AoC_7;
+			productName = AoC_7;
+			productReference = EE3C5B8F275EF66600889446 /* AoC_7 */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		EE93607E275D31C500C73F3D /* Project object */ = {
+		EE3C5B87275EF66600889446 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1310;
 				TargetAttributes = {
-					EE936085275D31C500C73F3D = {
+					EE3C5B8E275EF66600889446 = {
 						CreatedOnToolsVersion = 13.1;
 					};
 				};
 			};
-			buildConfigurationList = EE936081275D31C500C73F3D /* Build configuration list for PBXProject "AoC_6" */;
+			buildConfigurationList = EE3C5B8A275EF66600889446 /* Build configuration list for PBXProject "AoC_7" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -98,29 +100,29 @@
 				en,
 				Base,
 			);
-			mainGroup = EE93607D275D31C500C73F3D;
-			productRefGroup = EE936087275D31C500C73F3D /* Products */;
+			mainGroup = EE3C5B86275EF66600889446;
+			productRefGroup = EE3C5B90275EF66600889446 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EE936085275D31C500C73F3D /* AoC_6 */,
+				EE3C5B8E275EF66600889446 /* AoC_7 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		EE936082275D31C500C73F3D /* Sources */ = {
+		EE3C5B8B275EF66600889446 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE936091275D320D00C73F3D /* AoC_6.cpp in Sources */,
+				EE3C5B93275EF66600889446 /* AoC_7.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		EE93608B275D31C500C73F3D /* Debug */ = {
+		EE3C5B94275EF66600889446 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -179,7 +181,7 @@
 			};
 			name = Debug;
 		};
-		EE93608C275D31C500C73F3D /* Release */ = {
+		EE3C5B95275EF66600889446 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -231,7 +233,7 @@
 			};
 			name = Release;
 		};
-		EE93608E275D31C500C73F3D /* Debug */ = {
+		EE3C5B97275EF66600889446 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -239,7 +241,7 @@
 			};
 			name = Debug;
 		};
-		EE93608F275D31C500C73F3D /* Release */ = {
+		EE3C5B98275EF66600889446 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -250,25 +252,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EE936081275D31C500C73F3D /* Build configuration list for PBXProject "AoC_6" */ = {
+		EE3C5B8A275EF66600889446 /* Build configuration list for PBXProject "AoC_7" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EE93608B275D31C500C73F3D /* Debug */,
-				EE93608C275D31C500C73F3D /* Release */,
+				EE3C5B94275EF66600889446 /* Debug */,
+				EE3C5B95275EF66600889446 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EE93608D275D31C500C73F3D /* Build configuration list for PBXNativeTarget "AoC_6" */ = {
+		EE3C5B96275EF66600889446 /* Build configuration list for PBXNativeTarget "AoC_7" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EE93608E275D31C500C73F3D /* Debug */,
-				EE93608F275D31C500C73F3D /* Release */,
+				EE3C5B97275EF66600889446 /* Debug */,
+				EE3C5B98275EF66600889446 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = EE93607E275D31C500C73F3D /* Project object */;
+	rootObject = EE3C5B87275EF66600889446 /* Project object */;
 }

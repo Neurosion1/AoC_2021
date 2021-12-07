@@ -1,4 +1,3 @@
-
 AoC_2021.xcworkspace/xcuserdata/neurosion.xcuserdatad/UserInterfaceState.xcuserstate
 AoC_2/AoC_2.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagement.plist
 AoC_1/AoC_1.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagement.plist
@@ -6,3 +5,17 @@ AoC_4/AoC_4.xcodeproj/xcuserdata/Neurosion.xcuserdatad/xcschemes/xcschememanagem
 AoC_1/AoC_1.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagement.plist
 AoC_2/AoC_2.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagement.plist
 AoC_2021.xcworkspace/xcuserdata/neurosion.xcuserdatad/UserInterfaceState.xcuserstate
+
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/AoC_2021/v16/ipch/AutoPCH
+/.vs/AoC_2021/v16
+/AoC_3/Debug/AoC_3.tlog
+/AoC_3/Debug
+/AoC_6/Debug/AoC_6.tlog
+/AoC_6/Debug
+/AoC_5/.vs/AoC_5/v16
+.DS_Store
+

@@ -44,7 +44,7 @@ namespace
 
 int main()
 {
-  std::ifstream input("AoC_7_input.dat");
+  std::ifstream input("AoC_8_input.dat");
   if (input.fail()) {
     std::cout << "Didn't find the input file" << std::endl;
     return 1;

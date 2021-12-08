@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <numeric>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace
 {
@@ -26,96 +27,117 @@ namespace
       for (int i = 0; i < 10; ++i) {
         digit_desc digits;
         string_buffer >> digits;
+        std::sort(digits.begin(), digits.end());
         signal[i] = digits;
       }
       string_buffer >> delimeter;
       for (int i = 0; i < 4; ++i) {
         digit_desc digits;
         string_buffer >> digits;
+        std::sort(digits.begin(), digits.end());
         output[i] = digits;
       }
       digitlist.emplace_back(std::make_pair(signal, output));
     };
   }
 
-  std::array<std::string, 10> decode(std::array<std::string, 10> input)
+  std::unordered_map<std::string, int> decode(std::array<std::string, 10> input)
   {
-    std::vector<std::pair<std::string,int>> retval;
     std::array<std::string, 10> results;
-    std::unordered_map<std::string, int> leftovers;
-    for (int i = 0; i < 10; ++i) {
-      std::sort(input[i].begin(), input[i].end());
-      leftovers.insert(std::make_pair(input[i], i));
-    }
+    std::unordered_set<std::string> leftovers(input.begin(), input.end());
     for (int i = 0; i < 10; ++i) {
       switch(input[i].size()) {
         case 2:
+          // 1 has two segments.
           results[1] = input[i];
           leftovers.erase(input[i]);
           break;
         case 3:
+          // 7 has three segments.
           results[7] = input[i];
           leftovers.erase(input[i]);
           break;
         case 4:
+          // 4, happily, has four segments.
           results[4] = input[i];
           leftovers.erase(input[i]);
           break;
         case 7:
+          // 8 has all 7 segments.
           results[8] = input[i];
           leftovers.erase(input[i]);
           break;
       }
     }
     
-    // Find 3
+    // 3 is the only remaining 5-segment number that has both segments of 1.
     for (auto entry : leftovers) {
-      if (entry.first.size() == 5 && entry.first.find(results[1]) != std::string::npos) {
-        results[3] = entry.first;
-        leftovers.erase(entry.first);
+      if (entry.size() == 5) {
+        std::vector<char> missing;
+        std::set_difference(results[1].begin(), results[1].end(), entry.begin(), entry.end(), std::inserter(missing, missing.begin()));
+        if (missing.empty()) {
+          results[3] = entry;
+          leftovers.erase(entry);
+          break;
+        }
+      }
+    }
+    
+    // 9 is the only 6-segment number that has all segments of 4.
+    for (auto entry : leftovers) {
+      if (entry.size() == 6) {
+        std::vector<char> missing;
+        std::set_difference(results[4].begin(), results[4].end(), entry.begin(), entry.end(), std::inserter(missing, missing.begin()));
+        if (missing.empty()) {
+          results[9] = entry;
+          leftovers.erase(entry);
+          break;
+        }
+      }
+    }
+    
+    // 0 is the only remaining 6-segment number that has all segments of 7.
+    for (auto entry : leftovers) {
+      if (entry.size() == 6) {
+        std::vector<char> missing;
+        std::set_difference(results[7].begin(), results[7].end(), entry.begin(), entry.end(), std::inserter(missing, missing.begin()));
+        if (missing.empty()) {
+          results[0] = entry;
+          leftovers.erase(entry);
+          break;
+        }
+      }
+    }
+    
+    // 6 is the only remaining 6-segment number.
+    for (auto entry : leftovers) {
+      if (entry.size() == 6) {
+        results[6] = entry;
+        leftovers.erase(entry);
         break;
       }
     }
     
-    // Find 9
-    for (auto entry : leftovers) {
-      if (entry.first.size() == 6 && entry.first.find(results[4]) != std::string::npos) {
-        results[9] = entry.first;
-        leftovers.erase(entry.first);
-        break;
-      }
-    }
-    
-    // Find 0
-    for (auto entry : leftovers) {
-      if (entry.first.size() == 6 && entry.first.find(results[4]) == std::string::npos) {
-        results[0] = entry.first;
-        leftovers.erase(entry.first);
-        break;
-      }
-    }
-    
-    // Find 6
-    for (auto entry : leftovers) {
-      if (entry.first.size() == 6) {
-        results[6] = entry.first;
-        leftovers.erase(entry.first);
-        break;
-      }
-    }
-    
+    // 5 is the only remaining number whose segments are all in 6.
     for (auto entry : leftovers) {
       std::vector<char> remaining_letter;
-      std::set_difference(results[6].begin(), results[6].end(), entry.first.begin(), entry.first.end(), remaining_letter);
-      if (results[1].find(remaining_letter[0]) != std::string::npos) {
-        results[5] = entry.first;
-        leftovers.erase(entry.first);
+      std::set_difference(entry.begin(), entry.end(), results[6].begin(), results[6].end(), std::inserter(remaining_letter, remaining_letter.begin()));
+      if (remaining_letter.empty()) {
+        results[5] = entry;
+        leftovers.erase(entry);
+        break;
       }
     }
     
-    results[2] = leftovers.begin()->first;
+    // Last one is 2.
+    results[2] = *leftovers.begin();
     
-    return results;
+    std::unordered_map<std::string, int> retval;
+    for (int i = 0; i < 10; ++i) {
+      retval.insert({ results[i], i });
+    }
+
+    return retval;
   }
 }
 
@@ -145,5 +167,17 @@ int main()
   
   std::cout << "Part One: " << part_one_count << std::endl;
   
+  long total = 0;
+  for (auto entry : digitlist) {
+    auto decoded = decode(entry.first);
+    long this_number = 0;
+    this_number += (1000 * decoded[entry.second[0]]);
+    this_number += (100 * decoded[entry.second[1]]);
+    this_number += (10 * decoded[entry.second[2]]);
+    this_number += decoded[entry.second[3]];
+    total += this_number;
+  }
+  std::cout << "Part Two: " << total << std::endl;
+
   return 0;
 }

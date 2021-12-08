@@ -38,3 +38,6 @@ AoC_6/AoC_6.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagem
 AoC_7/AoC_7.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagement.plist
 AoC_2021.xcworkspace/contents.xcworkspacedata
 AoC_8/AoC_8.xcodeproj/xcuserdata/neurosion.xcuserdatad/xcschemes/xcschememanagement.plist
+/AoC_8/Debug
+/AoC_8/.vs/AoC_8/v16
+/AoC_8/AoC_8.vcxproj.user

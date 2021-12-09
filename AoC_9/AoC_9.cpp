@@ -9,6 +9,7 @@
 #include <numeric>
 #include <vector>
 #include <map>
+#include <queue>
 
 namespace
 {
@@ -52,24 +53,31 @@ namespace
     return true;
   }
 
-  int fill(CharGrid& grid, int x, int y, char unfilled_char, char fill_char)
+  int fill(CharGrid& grid, int startx, int starty, char unfilled_char, char fill_char)
   {
     int retval = 0;
     
-    if (grid[x][y] == unfilled_char) {
-      retval = 1;
-      grid[x][y] = fill_char;
-      if (x > 0) {
-        retval += fill(grid, x - 1, y, unfilled_char, fill_char);
-      }
-      if (x < grid.size() - 1) {
-        retval += fill(grid, x + 1, y, unfilled_char, fill_char);
-      }
-      if (y > 0) {
-        retval += fill(grid, x, y - 1, unfilled_char, fill_char);
-      }
-      if (y < grid[0].size() - 1) {
-        retval += fill(grid, x, y + 1, unfilled_char, fill_char);
+    std::queue<std::pair<int, int>> pixels;
+    pixels.push({startx, starty});
+    while (!pixels.empty()) {
+      int x = pixels.front().first;
+      int y = pixels.front().second;
+      pixels.pop();
+      if (grid[x][y] == unfilled_char) {
+        ++retval;
+        grid[x][y] = fill_char;
+        if (x > 0) {
+          pixels.push( { x - 1, y } );
+        }
+        if (x < grid.size() - 1) {
+          pixels.push( { x + 1, y });
+        }
+        if (y > 0) {
+          pixels.push( { x, y - 1 });
+        }
+        if (y < grid[0].size() - 1) {
+          pixels.push( { x, y + 1});
+        }
       }
     }
     

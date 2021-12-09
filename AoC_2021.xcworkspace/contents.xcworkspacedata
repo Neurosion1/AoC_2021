@@ -5,6 +5,12 @@
       location = "container:"
       name = "AoC_2021">
       <FileRef
+         location = "group:AoC_9/AoC_9.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:AoC_8/AoC_8.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:AoC_7/AoC_7.xcodeproj">
       </FileRef>
       <FileRef

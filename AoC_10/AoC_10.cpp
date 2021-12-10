@@ -84,7 +84,6 @@ int main()
   
   int corrupted_score = 0;
   std::vector<long long> completion_scores;
-  std::vector<std::stack<char>> incomplete;
   for (auto line : lines) {
     std::stack<char> opens;
     bool is_corrupted = false;

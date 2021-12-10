@@ -83,6 +83,7 @@ int main()
   process_file(input, lines);
   
   int corrupted_score = 0;
+  std::vector<long long> completion_scores;
   std::vector<std::stack<char>> incomplete;
   for (auto line : lines) {
     std::stack<char> opens;
@@ -103,19 +104,14 @@ int main()
       }
     }
     if (!is_corrupted && !opens.empty()) {
-      incomplete.emplace_back(opens);
+      long long completion_score = 0;
+      while (!opens.empty()) {
+        completion_score *= 5;
+        completion_score += get_completed_score(get_matching_char(opens.top()));
+        opens.pop();
+      }
+      completion_scores.push_back(completion_score);
     }
-  }
-  
-  std::vector<long long> completion_scores;
-  for (auto opens : incomplete) {
-    long long completion_score = 0;
-    while (!opens.empty()) {
-      completion_score *= 5;
-      completion_score += get_completed_score(get_matching_char(opens.top()));
-      opens.pop();
-    }
-    completion_scores.push_back(completion_score);
   }
   std::sort(completion_scores.begin(), completion_scores.end());
   

@@ -33,7 +33,7 @@ namespace
     };
   }
 
-  bool is_local_minimum(const Grid& grid, int x, int y)
+  bool is_local_minimum(const Grid& grid, size_t x, size_t y)
   {
     int test = grid[x][y];
     
@@ -60,8 +60,8 @@ namespace
     std::queue<std::pair<int, int>> pixels;
     pixels.push({startx, starty});
     while (!pixels.empty()) {
-      int x = pixels.front().first;
-      int y = pixels.front().second;
+      size_t x = pixels.front().first;
+      size_t y = pixels.front().second;
       pixels.pop();
       if (grid[x][y] == unfilled_char) {
         ++retval;
@@ -98,8 +98,8 @@ int main()
   
   std::vector<std::pair<int, int>> lowPoints;
   int part_one = 0;
-  for (int x = 0; x < grid.size(); ++x) {
-    for (int y = 0; y < grid.size(); ++y) {
+  for (size_t x = 0; x < grid.size(); ++x) {
+    for (size_t y = 0; y < grid.size(); ++y) {
       if (is_local_minimum(grid, x, y)) {
         part_one += (1 + grid[x][y]);
         lowPoints.push_back( { x, y } );
@@ -110,8 +110,8 @@ int main()
   std::vector<char> row(100, '?');
   CharGrid chargrid(100, row);
   
-  for (int x = 0; x < grid.size(); ++x) {
-    for (int y = 0; y < grid.size(); ++y) {
+  for (size_t x = 0; x < grid.size(); ++x) {
+    for (size_t y = 0; y < grid.size(); ++y) {
       if (grid[x][y] == 9) chargrid[x][y] = 'X';
     }
   }

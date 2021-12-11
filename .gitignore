@@ -1,5 +1,4 @@
-*/xcschememanagement.plist
-*.xcuserstate
+xcuserdata/
 */.DS_Store
 
 ﻿################################################################################
@@ -25,3 +24,4 @@
 /AoC_10/Debug
 /AoC_9/.vs/AoC_9/v16
 /AoC_9/Debug
+*.xcbkptlist

@@ -12,7 +12,7 @@
 #include <queue>
 
 namespace
-{
+{{
   typedef std::vector<std::vector<int>> Grid;
   typedef std::vector<std::vector<char>> CharGrid;
 
@@ -31,7 +31,7 @@ namespace
       } while (!string_buffer.eof());
       grid.emplace_back(row);
     };
-  }
+  }}
 
   bool is_local_minimum(const Grid& grid, int x, int y)
   {

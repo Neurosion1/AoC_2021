@@ -9,7 +9,7 @@
 #include <numeric>
 #include <vector>
 #include <map>
-#include <queue>
+#include <stack>
 
 namespace {
   void process_file(std::ifstream& input, std::list<std::string>& lines)

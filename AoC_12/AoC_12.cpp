@@ -17,17 +17,16 @@ namespace {
   {
   public:
     Cave(const std::string& name)
-    : name_(name), big_(name[0] >= 'A' && name[0] <= 'Z')
+    : name_(name), small_(name[0] >= 'a' && name[0] <= 'z')
     {
       
     }
     
     std::string name_;
-    bool big_;
+    bool small_;
     std::vector<std::weak_ptr<Cave>> connections_;
   };
   typedef std::shared_ptr<Cave> CavePtr;
-
   typedef std::unordered_map<std::string, CavePtr> Caves;
 
   void process_file(std::ifstream& input, Caves& caves)
@@ -52,15 +51,14 @@ namespace {
     while (!input.eof());
   }
 
-  void visit(std::vector<std::string>& paths,
-             std::string& pathString,
+  void visit(std::vector<std::vector<CavePtr>>& paths,
              std::vector<CavePtr>&    current,
              std::unordered_multiset<std::string>& visited,
              const std::string& double_visit_cave)
   {
     CavePtr current_cave = current.back();
     if (current_cave->name_ == "end") {
-      paths.push_back(pathString);
+      paths.push_back(current);
     }
     else {
       for (int i = 0; i < current_cave->connections_.size(); ++i) {
@@ -68,12 +66,11 @@ namespace {
         size_t visited_count = visited.count(next_cave->name_);
         if (visited_count == 0 || (next_cave->name_ == double_visit_cave && visited_count == 1)) {
           std::unordered_multiset<std::string>::iterator add_iter = visited.end();
-          if (!next_cave->big_) {
+          if (next_cave->small_) {
             add_iter = visited.insert(next_cave->name_);
           }
-          std::string newPathString = pathString + "->" + next_cave->name_;
           current.push_back(next_cave);
-          visit(paths, newPathString, current, visited, double_visit_cave);
+          visit(paths, current, visited, double_visit_cave);
           current.pop_back();
           if (add_iter != visited.end()) {
             visited.erase(add_iter);
@@ -95,21 +92,18 @@ int main()
   Caves caves;
   process_file(input, caves);
   
-  CavePtr start = caves.find("start")->second;
-  
-  std::vector<std::string> paths ;
+  std::vector<std::vector<CavePtr>> paths;
   std::unordered_multiset<std::string> visited = { "start" };
-  std::vector<CavePtr> path = { start };
+  std::vector<CavePtr> path = { caves.find("start")->second };
   
-  std::string startString = "start";
-  visit(paths, startString, path, visited, "");
+  visit(paths, path, visited, "");
   std::cout << "Part One: " << paths.size() << std::endl;
-  std::vector<std::string> allPaths;
+  std::vector<std::vector<CavePtr>> allPaths;
   for (auto iter = caves.begin(); iter != caves.end(); ++iter) {
     paths.clear();
-    if (!iter->second->big_ && !iter->first.empty() && iter->first != "start" && iter->first != "end") {
+    if (iter->second->small_ && iter->first != "start" && iter->first != "end") {
       std::string caveName = iter->first;
-      visit(paths, startString, path, visited, iter->first);
+      visit(paths, path, visited, iter->first);
       allPaths.insert(allPaths.end(), paths.begin(), paths.end());
     }
   }

@@ -12,7 +12,6 @@
 #include <unordered_set>
 
 namespace {
-
   struct Cave
   {
   public:
@@ -64,8 +63,7 @@ namespace {
 
   void visit(std::unordered_set<std::string>& paths,
              std::vector<CavePtr>&    current,
-             const CavePtr& end_cave,
-             const CavePtr& double_visit_cave)
+             const CavePtr& end_cave)
   {
     CavePtr current_cave = current.back();
     for (int i = 0; i < current_cave->connections_.size(); ++i) {
@@ -77,7 +75,7 @@ namespace {
         if (next_cave->visited_ < next_cave->max_visited_) {
           ++next_cave->visited_;
           current.push_back(next_cave);
-          visit(paths, current, end_cave, double_visit_cave);
+          visit(paths, current, end_cave);
           current.pop_back();
           --next_cave->visited_;
         }
@@ -102,13 +100,13 @@ int main()
   std::unordered_set<std::string> paths;
   std::vector<CavePtr> path = { startCave };
   
-  visit(paths, path, endCave, nullptr);
+  visit(paths, path, endCave);
   std::cout << "Part One: " << paths.size() << std::endl;
   paths.clear();
   for (auto iter = caves.begin(); iter != caves.end(); ++iter) {
     if (iter->second->small_ && iter->second != startCave && iter->second != endCave) {
       iter->second->max_visited_ = 2;
-      visit(paths, path, endCave, iter->second);
+      visit(paths, path, endCave);
       iter->second->max_visited_ = 1;
     }
   }

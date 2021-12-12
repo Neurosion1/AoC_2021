@@ -86,14 +86,13 @@ int main()
   long part_one = 0;
   while(true)
   {
-    ++i;
     for (int x = 0; x < grid.size(); ++x) {
       for (int y = 0; y < grid[0].size(); ++y) {
         ++grid[x][y];
       }
     }
     long these_flashes = process_step(grid);
-    if (i <= 100) {
+    if (++i <= 100) {
       part_one += these_flashes;
     }
     if (these_flashes == 100) {

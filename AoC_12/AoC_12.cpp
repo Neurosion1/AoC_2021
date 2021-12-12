@@ -53,8 +53,8 @@ namespace {
 
   void visit(std::vector<std::vector<CavePtr>>& paths,
              std::vector<CavePtr>&    current,
-             std::unordered_multiset<std::string>& visited,
-             const std::string& double_visit_cave)
+             std::unordered_multiset<CavePtr>& visited,
+             const CavePtr& double_visit_cave)
   {
     CavePtr current_cave = current.back();
     if (current_cave->name_ == "end") {
@@ -63,11 +63,11 @@ namespace {
     else {
       for (int i = 0; i < current_cave->connections_.size(); ++i) {
         CavePtr next_cave = current_cave->connections_[i].lock();
-        size_t visited_count = visited.count(next_cave->name_);
-        if (visited_count == 0 || (next_cave->name_ == double_visit_cave && visited_count == 1)) {
-          std::unordered_multiset<std::string>::iterator add_iter = visited.end();
+        size_t visited_count = visited.count(next_cave);
+        if (visited_count == 0 || (next_cave == double_visit_cave && visited_count == 1)) {
+          std::unordered_multiset<CavePtr>::iterator add_iter = visited.end();
           if (next_cave->small_) {
-            add_iter = visited.insert(next_cave->name_);
+            add_iter = visited.insert(next_cave);
           }
           current.push_back(next_cave);
           visit(paths, current, visited, double_visit_cave);
@@ -92,24 +92,22 @@ int main()
   Caves caves;
   process_file(input, caves);
   
+  CavePtr startCave = caves["start"];
   std::vector<std::vector<CavePtr>> paths;
-  std::unordered_multiset<std::string> visited = { "start" };
-  std::vector<CavePtr> path = { caves.find("start")->second };
+  std::unordered_multiset<CavePtr> visited = { startCave };
+  std::vector<CavePtr> path = { startCave };
   
-  visit(paths, path, visited, "");
+  visit(paths, path, visited, nullptr);
   std::cout << "Part One: " << paths.size() << std::endl;
-  std::vector<std::vector<CavePtr>> allPaths;
+  paths.clear();
   for (auto iter = caves.begin(); iter != caves.end(); ++iter) {
-    paths.clear();
     if (iter->second->small_ && iter->first != "start" && iter->first != "end") {
-      std::string caveName = iter->first;
-      visit(paths, path, visited, iter->first);
-      allPaths.insert(allPaths.end(), paths.begin(), paths.end());
+      visit(paths, path, visited, iter->second);
     }
   }
-  std::sort(allPaths.begin(), allPaths.end());
-  allPaths.erase(std::unique(allPaths.begin(), allPaths.end()), allPaths.end());
-  std::cout << "Part Two: " << allPaths.size() << std::endl;
+  std::sort(paths.begin(), paths.end());
+  paths.erase(std::unique(paths.begin(), paths.end()), paths.end());
+  std::cout << "Part Two: " << paths.size() << std::endl;
   
   return 0;
 }

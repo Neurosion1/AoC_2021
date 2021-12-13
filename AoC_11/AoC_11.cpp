@@ -31,7 +31,7 @@ namespace {
     };
   }
 
-  void increase(Grid& grid, int x, int y)
+  void increase(Grid& grid, size_t x, size_t y)
   {
     if (x >= 0 && x < grid.size() && y >= 0 && y < grid[0].size() && grid[x][y] % 10 != 0) {
       ++grid[x][y];
@@ -57,8 +57,8 @@ namespace {
     long total_flashes = 0;
     do {
       flashed = false;
-      for (int x = 0; x < grid.size(); ++x) {
-        for (int y = 0; y < grid[0].size(); ++y) {
+      for (size_t x = 0; x < grid.size(); ++x) {
+        for (size_t y = 0; y < grid[0].size(); ++y) {
           if (grid[x][y] == 10) {
             flashed = true;
             flash(grid, x, y);
@@ -86,8 +86,8 @@ int main()
   long part_one = 0;
   while(true)
   {
-    for (int x = 0; x < grid.size(); ++x) {
-      for (int y = 0; y < grid[0].size(); ++y) {
+    for (size_t x = 0; x < grid.size(); ++x) {
+      for (size_t y = 0; y < grid[0].size(); ++y) {
         ++grid[x][y];
       }
     }

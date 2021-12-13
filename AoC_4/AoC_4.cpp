@@ -110,7 +110,7 @@ int main()
   int lastWinner  = -1, lastWinnerNumber  = -1;
   std::vector<char> finished(boards.size(), false);
   for (int n : numbers) {
-    for (int b = 0; b < boards.size(); ++b) {
+    for (size_t b = 0; b < boards.size(); ++b) {
       if (!finished[b] && markBoard(boards[b], n) && checkBoard(boards[b])) {
         finished[b] = true;
         if (firstWinnerNumber < 0) {

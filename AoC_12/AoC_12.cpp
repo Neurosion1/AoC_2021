@@ -55,7 +55,7 @@ namespace {
   {
     std::string retval;
     // Skip "start" and "end"
-    for (int i = 1; i < path.size() - 1; ++i) {
+    for (size_t i = 1; i < path.size() - 1; ++i) {
       retval += path[i]->name_;
     }
     return retval;
@@ -66,7 +66,7 @@ namespace {
              const CavePtr& end_cave)
   {
     CavePtr current_cave = current.back();
-    for (int i = 0; i < current_cave->connections_.size(); ++i) {
+    for (size_t i = 0; i < current_cave->connections_.size(); ++i) {
       if (current_cave == end_cave) {
         paths.emplace(string_path(current));
       }

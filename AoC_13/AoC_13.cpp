@@ -55,20 +55,20 @@ void process_file(std::ifstream& input, Grid& grid, std::vector<std::pair<char, 
 void fold(Grid& grid, char axis, int fold)
 {
   if (axis == 'x') {
-    for (int x = fold + 1, step = 2; x < grid[0].size(); ++x, step += 2) {
-      for (int y = 0; y < grid.size(); ++y) {
+    for (size_t x = fold + 1, step = 2; x < grid[0].size(); ++x, step += 2) {
+      for (size_t y = 0; y < grid.size(); ++y) {
         if (grid[y][x] == '#' || grid[y][x - step] == '#') {
           grid [y][x - step] = '#';
         }
       }
     }
-    for (int y = 0; y < grid.size(); ++y) {
+    for (size_t y = 0; y < grid.size(); ++y) {
       grid[y].resize(fold);
     }
   }
   else {
-    for (int y = fold + 1, step = 2; y < grid.size(); ++y, step += 2) {
-      for (int x = 0; x < grid[0].size(); ++x) {
+    for (size_t y = fold + 1, step = 2; y < grid.size(); ++y, step += 2) {
+      for (size_t x = 0; x < grid[0].size(); ++x) {
         if (grid[y][x] == '#' || grid[y - step][x] == '#') {
           grid [y - step][x] = '#';
         }
@@ -93,21 +93,21 @@ int main()
   fold(grid, folds[0].first, folds[0].second);
   
   int dot_count = 0;
-  for (int y = 0; y < grid.size(); ++y) {
-    for (int x = 0; x < grid[0].size(); ++x) {
+  for (size_t y = 0; y < grid.size(); ++y) {
+    for (size_t x = 0; x < grid[0].size(); ++x) {
       if (grid[y][x] == '#') { ++dot_count; }
     }
   }
   
   std::cout << "Part One: " << dot_count << std::endl;
   
-  for (int i = 1; i < folds.size(); ++i) {
+  for (size_t i = 1; i < folds.size(); ++i) {
     fold(grid, folds[i].first, folds[i].second);
   }
   
   std::cout << "Part Two: " << "\n\n";
-  for (int y = 0; y < grid.size(); ++y) {
-    for (int x = 0; x < grid[0].size(); ++x) {
+  for (size_t y = 0; y < grid.size(); ++y) {
+    for (size_t x = 0; x < grid[0].size(); ++x) {
       std::cout << grid[y][x];
     }
     std::cout << "\n";

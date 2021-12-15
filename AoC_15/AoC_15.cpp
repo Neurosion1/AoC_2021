@@ -5,6 +5,9 @@
 #include <numeric>
 #include <vector>
 #include <list>
+#include <set>
+#include <map>
+#include <unordered_set>
 #include <unordered_map>
 
 namespace
@@ -54,93 +57,116 @@ typedef std::vector<GridRow> Grid;
   }
 #endif
 
-struct Node;
-  typedef std::vector<Node> NodeRow;
-  typedef std::vector<NodeRow> NodeGrid;
-  struct Node
+  class GraphWalker
   {
-    Node() : path_cost_(INT_MAX), visited_(false) {}
-    
-    void initialize(NodeGrid& nodeGrid, const Grid& costGrid, std::list<Node *> * unvisited, int x, int y)
+  public:
+    class Node
     {
-      cost_ = costGrid[x][y];
-      unvisited_ = unvisited;
-      if (x > 0) {
-        connections_.push_back(&nodeGrid[x-1][y]);
-      }
-      if (x < costGrid.size() - 1) {
-        connections_.push_back(&nodeGrid[x+1][y]);
-      }
-      if (y > 0) {
-        connections_.push_back(&nodeGrid[x][y-1]);
-      }
-      if (y < costGrid[0].size() - 1) {
-        connections_.push_back(&nodeGrid[x][y+1]);
-      }
-    }
-    
-    void update_cost(int incoming_cost)
-    {
-      if (path_cost_ == INT_MAX) {
-        unvisited_->push_back(this);
-      }
-      if (cost_ + incoming_cost < path_cost_) {
-        path_cost_ = cost_ + incoming_cost;
-      }
-    }
-    
-    void visit()
-    {
-      for (int i = 0; i < connections_.size(); ++i) {
-        if (!connections_[i]->visited_) {
-          connections_[i]->update_cost(path_cost_);
+    public:
+      Node(GraphWalker * parent, int cost) : parent_(parent), cost_(cost), path_cost_(INT_MAX), visited_(false) {}
+      
+      void initialize(int x, int y)
+      {
+        if (x > 0) {
+          connections_.push_back(&parent_->nodeGrid_[x-1][y]);
+        }
+        if (x < parent_->nodeGrid_.size() - 1) {
+          connections_.push_back(&parent_->nodeGrid_[x+1][y]);
+        }
+        if (y > 0) {
+          connections_.push_back(&parent_->nodeGrid_[x][y-1]);
+        }
+        if (y < parent_->nodeGrid_[0].size() - 1) {
+          connections_.push_back(&parent_->nodeGrid_[x][y+1]);
         }
       }
-      visited_ = true;
+      
+      void touch(int incoming_cost)
+      {
+        if (cost_ + incoming_cost < path_cost_) {
+          path_cost_ = cost_ + incoming_cost;
+          auto unvisited_iter = parent_->unvisited_.find(this);
+          if (unvisited_iter != parent_->unvisited_.end()) {
+            parent_->unvisited_costs_.erase(unvisited_iter->second);
+          }
+          auto new_cost_iter = parent_->unvisited_costs_.insert( { path_cost_, this } );
+          parent_->unvisited_.insert( { this, new_cost_iter } );
+        }
+      }
+      
+      void visit()
+      {
+        for (int i = 0; i < connections_.size(); ++i) {
+          if (!connections_[i]->visited_) {
+            connections_[i]->touch(path_cost_);
+          }
+        }
+        visited_ = true;
+      }
+      
+      int get_path_cost() const
+      {
+        return path_cost_;
+      }
+      
+      void set_path_cost(int n)
+      {
+        path_cost_ = n;
+      }
+      
+    private:
+      int cost_;
+      int path_cost_;
+      bool visited_;
+      GraphWalker * parent_;
+      std::vector<Node *> connections_;
+    };
+    typedef std::vector<Node> NodeRow;
+    typedef std::vector<NodeRow> NodeGrid;
+    
+    struct CompareNodeCosts
+    {
+      bool operator()(const Node * left, const Node * right) { return left->get_path_cost() < right->get_path_cost(); }
+    };
+    
+    GraphWalker(const Grid& costGrid)
+    {
+      for (int x = 0; x < costGrid.size(); ++x) {
+        NodeRow row;
+        for (int y = 0; y < costGrid[0].size(); ++y) {
+          row.push_back(Node(this, costGrid[x][y]));
+        }
+        nodeGrid_.push_back(row);
+      }
+      nodeGrid_[0][0].set_path_cost(0);
+      
+      for (int x = 0; x < nodeGrid_.size(); ++x) {
+        for (int y = 0; y < nodeGrid_.size(); ++y) {
+          nodeGrid_[x][y].initialize(x, y);
+        }
+      }
+      auto iter = unvisited_costs_.insert( { nodeGrid_[0][0].get_path_cost(), &nodeGrid_[0][0] } );
+      unvisited_.insert( { &nodeGrid_[0][0], iter } );
     }
     
-    int cost_;
-    int path_cost_;
-    bool visited_;
-    std::vector<Node *> connections_;
-    std::list<Node *> * unvisited_;
+    int get_minimum_path_length()
+    {
+      while (!unvisited_.empty()) {
+        auto iter = unvisited_costs_.begin();
+        Node * node = iter->second;
+        unvisited_.erase(node);
+        unvisited_costs_.erase(iter);
+        node->visit();
+      }
+      
+      return nodeGrid_[nodeGrid_.size()-1][nodeGrid_[0].size()-1].get_path_cost();
+    }
+    
+  private:
+    NodeGrid nodeGrid_;
+    std::multimap<int, Node *> unvisited_costs_;
+    std::unordered_map<Node *, std::multimap<int, Node *>::iterator> unvisited_;
   };
-
-  
-
-  int get_minimum_path_walk(const Grid& grid)
-  {
-    NodeRow nodeRow(grid[0].size());
-    NodeGrid nodeGrid(grid.size(), nodeRow);
-    nodeGrid[0][0].path_cost_ = 0;
-    
-    std::list<Node *> unvisited;
-    unvisited.push_back(&nodeGrid[0][0]);
-    for (int x = 0; x < nodeGrid.size(); ++x) {
-      for (int y = 0; y < nodeGrid.size(); ++y) {
-        nodeGrid[x][y].initialize(nodeGrid, grid, &unvisited, x, y);
-      }
-    }
-    
-    auto next_visit = unvisited.begin();
-    do {
-      (*next_visit)->visit();
-      unvisited.erase(next_visit);
-      int min_path_cost = INT_MAX;
-      if (unvisited.empty()) {
-        break;
-      }
-      for (auto iter = unvisited.begin(); iter != unvisited.end(); ++iter) {
-        if ((*iter)->path_cost_ < min_path_cost) {
-          next_visit = iter;
-          min_path_cost = (*iter)->path_cost_;
-        }
-      }
-    }
-    while (true);
-    
-    return nodeGrid[grid.size()-1][grid[0].size()-1].path_cost_;
-  }
 }
 
 int main()
@@ -154,7 +180,8 @@ int main()
   Grid grid;
   process_file(input, grid);
   
-  std::cout << "Part One: " << get_minimum_path_walk(grid) << "\n";
+  GraphWalker walker(grid);
+  std::cout << "Part One: " << walker.get_minimum_path_length() << "\n";
   
   GridRow finalGridRow(grid[0].size() * 5, 0);
   Grid finalGrid(grid.size() * 5, finalGridRow);
@@ -180,7 +207,8 @@ int main()
     }
   }
   
-  std::cout << "Part Two: " << get_minimum_path_walk(finalGrid) << std::endl;
+  GraphWalker nextWalker(finalGrid);
+  std::cout << "Part Two: " << nextWalker.get_minimum_path_length() << std::endl;
   
   return 0;
 }

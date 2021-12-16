@@ -48,38 +48,25 @@ typedef std::queue<char> Bits;
      return c;
    }
    
-   long long read_literal_value()
-   {
-     std::vector<long long> number_bits;
-
-     bool is_last_byte = false;
-     do {
-       if (read() == 0) {
-         is_last_byte = true;
-       }
-       number_bits.push_back(read());
-       number_bits.push_back(read());
-       number_bits.push_back(read());
-       number_bits.push_back(read());
-     }
-     while (!is_last_byte);
-
-     long long retval = 0;
-     size_t shift = number_bits.size() - 1;
-     for (size_t i = 0; i < number_bits.size(); ++i, --shift) {
-       if (number_bits[i] != 0) {
-         retval += (number_bits[i] << shift);
-       }
-     }
-     return retval;
-   }
-   
    int read_number(int bits_to_read)
    {
      int retval = 0;
      while (bits_to_read > 0) {
-       retval = retval + (read() << --bits_to_read);
+       retval += (read() << --bits_to_read);
      }
+     return retval;
+   }
+   
+   long long read_literal_value()
+   {
+     long long retval = 0;
+     bool is_last_byte = false;
+     do {
+       is_last_byte = (read() == 0);
+       retval <<= 4;
+       retval += read_number(4);
+     }
+     while (!is_last_byte);
      return retval;
    }
 
@@ -93,8 +80,8 @@ typedef std::queue<char> Bits;
      }
      else {
        std::vector<long long> subpackets;
-       char length_type = read();
-       if (length_type == 0) {
+       // Next bit is length type
+       if (read() == 0) {
          size_t bit_length = read_number(15);
          size_t read_end = bits_.size() - bit_length;
          while (bits_.size() != read_end) {

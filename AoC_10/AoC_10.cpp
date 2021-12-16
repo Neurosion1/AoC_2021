@@ -2,13 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <vector>
-#include <array>
-#include <list>
 #include <algorithm>
-#include <numeric>
+#include <list>
 #include <vector>
-#include <map>
 #include <stack>
 
 namespace {

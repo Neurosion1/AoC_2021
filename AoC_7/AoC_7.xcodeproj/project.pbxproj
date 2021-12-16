@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE1EFDF8276BBAD500BFBB2F /* AoC_7_input.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE3C5B9C275EF70600889446 /* AoC_7_input.dat */; };
 		EE3C5B93275EF66600889446 /* AoC_7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE3C5B92275EF66600889446 /* AoC_7.cpp */; };
-		EE3C5B9D275EF70D00889446 /* AoC_7_input.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE3C5B9C275EF70600889446 /* AoC_7_input.dat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,7 +18,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				EE3C5B9D275EF70D00889446 /* AoC_7_input.dat in CopyFiles */,
+				EE1EFDF8276BBAD500BFBB2F /* AoC_7_input.dat in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

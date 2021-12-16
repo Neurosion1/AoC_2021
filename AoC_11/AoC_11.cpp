@@ -1,15 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <vector>
-#include <array>
-#include <list>
-#include <algorithm>
-#include <numeric>
-#include <vector>
-#include <map>
-#include <queue>
 
 namespace {
   typedef std::vector<std::vector<int>> Grid;

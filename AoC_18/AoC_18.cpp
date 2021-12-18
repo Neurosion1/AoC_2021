@@ -15,7 +15,6 @@ namespace
   struct SFNumber;
 
   enum class Side { eLeft, eRight };
-  enum class Type { eNumber, ePair };
   struct SFBase
   {
     SFBase(std::shared_ptr<SFPair> parent, Side side)
@@ -27,21 +26,24 @@ namespace
     Side side_;
     std::weak_ptr<SFPair> parent_;
     virtual bool is_number() const = 0;
+    virtual long long get_magnitude() const = 0;
   };
 
-  struct SFNumber : public SFBase
+  struct SFNumber : public SFBase, public std::enable_shared_from_this<SFNumber>
   {
     SFNumber(std::shared_ptr<SFPair> parent, Side side, int number) : SFBase(parent, side), number_(number) {}
     long long number_;
     virtual bool is_number() const override { return true; }
+    long long get_magnitude() const override { return number_; }
   };
 
-  struct SFPair : public SFBase
+  struct SFPair : public SFBase, public std::enable_shared_from_this<SFPair>
   {
     SFPair(std::shared_ptr<SFPair> parent, Side side) : SFBase(parent, side) {}
     SFBasePtr left_;
     SFBasePtr right_;
     virtual bool is_number() const override { return false; }
+    long long get_magnitude() const override { return left_->get_magnitude() * 3 + right_->get_magnitude() * 2; }
   };
 
   std::shared_ptr<SFPair> parse_impl(const std::string& text, int& position, std::shared_ptr<SFPair> parent, Side side)
@@ -99,44 +101,41 @@ namespace
     return retval;
   }
 
-  bool explode(std::shared_ptr<SFPair> pair, int depth, bool& exploded)
+  void do_explode(std::shared_ptr<SFPair> pair, Side side)
+  {
+    auto current = pair;
+    while (current && current->side_ == side) {
+      current = current->parent_.lock();
+    }
+    if (current) {
+      if (!current->parent_.lock()) {
+        return;
+      }
+      auto child = (side == Side::eLeft ? current->parent_.lock()->left_ : current->parent_.lock()->right_);
+      while (auto pair = std::dynamic_pointer_cast<SFPair>(child)) {
+        child = (side == Side::eLeft ? pair->right_ : pair->left_);
+      }
+      std::static_pointer_cast<SFNumber>(child)->number_ +=
+        std::static_pointer_cast<SFNumber>(side == Side::eLeft ? pair->left_ : pair->right_)->number_;
+    }
+  }
+
+  bool explode(std::shared_ptr<SFPair> pair, int depth)
   {
     assert(!pair->is_number());
     if (depth == 4) {
-      auto current = pair;
-      while (current && current->side_ == Side::eLeft) {
-        current = current->parent_.lock();
-      }
-      if (current) {
-        auto child = current->parent_.lock()->left_;
-        while (!child->is_number()) {
-          child = std::static_pointer_cast<SFPair>(child)->right_;
-        }
-        std::static_pointer_cast<SFNumber>(child)->number_ += std::static_pointer_cast<SFNumber>(pair->left_)->number_;
-      }
-      
-      current = pair;
-      while (current && current->side_ == Side::eRight) {
-        current = current->parent_.lock();
-      }
-      if (current && current->parent_.lock()) {
-        auto child = current->parent_.lock()->right_;
-        while (!child->is_number()) {
-          child = std::static_pointer_cast<SFPair>(child)->left_;
-        }
-        std::static_pointer_cast<SFNumber>(child)->number_ += std::static_pointer_cast<SFNumber>(pair->right_)->number_;
-      }
-      exploded = true;
+      do_explode(pair, Side::eLeft);
+      do_explode(pair, Side::eRight);
       return true;
     }
     else {
       if (!pair->left_->is_number()) {
-        if (explode(std::static_pointer_cast<SFPair>(pair->left_), depth + 1, exploded)) {
+        if (explode(std::static_pointer_cast<SFPair>(pair->left_), depth + 1)) {
           pair->left_ = std::make_shared<SFNumber>(pair, Side::eLeft, 0);
         }
       }
-      if (!exploded && !pair->right_->is_number()) {
-        if (explode(std::static_pointer_cast<SFPair>(pair->right_), depth + 1, exploded)) {
+      if (!pair->right_->is_number()) {
+        if (explode(std::static_pointer_cast<SFPair>(pair->right_), depth + 1)) {
           pair->right_ = std::make_shared<SFNumber>(pair, Side::eRight, 0);
         }
       }
@@ -144,15 +143,20 @@ namespace
     return false;
   }
 
+  std::shared_ptr<SFPair> do_split(std::shared_ptr<SFPair> parent, Side side, long long number)
+  {
+    std::shared_ptr<SFPair> new_pair = std::make_shared<SFPair>(parent, side);
+    new_pair->left_  = std::make_shared<SFNumber>(new_pair, Side::eLeft, number / 2);
+    new_pair->right_ = std::make_shared<SFNumber>(new_pair, Side::eRight, number / 2 + (number % 2));
+    return new_pair;
+  }
+
   bool split(std::shared_ptr<SFPair> pair)
   {
     if (pair->left_->is_number()) {
-      std::shared_ptr<SFNumber> number = std::static_pointer_cast<SFNumber>(pair->left_);
-      if (number->number_ >= 10) {
-        std::shared_ptr<SFPair> new_pair = std::make_shared<SFPair>(pair, Side::eLeft);
-        new_pair->left_  = std::make_shared<SFNumber>(new_pair, Side::eLeft, number->number_ / 2);
-        new_pair->right_ = std::make_shared<SFNumber>(new_pair, Side::eRight, number->number_ / 2 + (number->number_ % 2 != 0));
-        pair->left_ = new_pair;
+      long long number = std::static_pointer_cast<SFNumber>(pair->left_)->number_;
+      if (number >= 10) {
+        pair->left_ = do_split(pair, Side::eLeft, number);
         return true;
       }
     }
@@ -161,12 +165,9 @@ namespace
     }
     
     if (pair->right_->is_number()) {
-      std::shared_ptr<SFNumber> number = std::static_pointer_cast<SFNumber>(pair->right_);
-      if (number->number_ >= 10) {
-        std::shared_ptr<SFPair> new_pair = std::make_shared<SFPair>(pair, Side::eRight);
-        new_pair->left_  = std::make_shared<SFNumber>(new_pair, Side::eLeft, number->number_ / 2);
-        new_pair->right_ = std::make_shared<SFNumber>(new_pair, Side::eRight, number->number_ / 2 + (number->number_ % 2 != 0));
-        pair->right_ = new_pair;
+      long long number = std::static_pointer_cast<SFNumber>(pair->right_)->number_;
+      if (number >= 10) {
+        pair->right_ = do_split(pair, Side::eRight, number);
         return true;
       }
     }
@@ -177,22 +178,9 @@ namespace
     return false;
   }
 
-  long long get_magnitude(std::shared_ptr<SFPair> pair)
+  void reduce(std::shared_ptr<SFPair> pair)
   {
-    long long left, right;
-    if (pair->left_->is_number()) {
-      left = std::static_pointer_cast<SFNumber>(pair->left_)->number_;
-    }
-    else {
-      left = get_magnitude(std::static_pointer_cast<SFPair>(pair->left_));
-    }
-    if (pair->right_->is_number()) {
-      right = std::static_pointer_cast<SFNumber>(pair->right_)->number_;
-    }
-    else {
-      right = get_magnitude(std::static_pointer_cast<SFPair>(pair->right_));
-    }
-    return (3 * left) + (2 * right);
+    while (explode(pair, 0) || split(pair));
   }
 }
 
@@ -209,45 +197,24 @@ int main()
   std::shared_ptr<SFPair> work_pair = parse(pairs[0]);
   for (int i = 1; i < pairs.size(); ++i) {
     work_pair = add(work_pair, parse(pairs[i]));
-    while (true) {
-      bool exploded = false;
-      explode(work_pair, 0, exploded);
-      if (!exploded && !split(work_pair)) {
-        break;
-      }
-    }
+    reduce(work_pair);
   }
   
-  std::cout << "Part One: " << get_magnitude(work_pair) << "\n";
+  std::cout << "Part One: " << work_pair->get_magnitude() << "\n";
   
   long long best = 0;
   for (int i = 0; i < pairs.size() - 1; ++i) {
-    for (int j = 1; j < pairs.size(); ++j) {
+    for (int j = i + 1; j < pairs.size(); ++j) {
       std::shared_ptr<SFPair> work_pair = add(parse(pairs[i]), parse(pairs[j]));
-      while (true) {
-        bool exploded = false;
-        explode(work_pair, 0, exploded);
-        if (!exploded && !split(work_pair)) {
-          break;
-        }
-      }
-      best = std::max(best, get_magnitude(work_pair));
+      reduce(work_pair);
+      best = std::max(best, work_pair->get_magnitude());
       
       work_pair = add(parse(pairs[j]), parse(pairs[i]));
-      while (true) {
-        bool exploded = false;
-        explode(work_pair, 0, exploded);
-        if (!exploded && !split(work_pair)) {
-          break;
-        }
-      }
-      best = std::max(best, get_magnitude(work_pair));
+      reduce(work_pair);
+      best = std::max(best, work_pair->get_magnitude());
     }
   }
   std::cout << "Part Two: " << best << "\n";
-  
-  //std::cout << "Part One: " << bitsMachine.version_sum_ << "\n";
-  //std::cout << "Part Two: " << result << std::endl;
   
   return 0;
 }

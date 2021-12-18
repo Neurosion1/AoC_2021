@@ -77,12 +77,13 @@ namespace
     return parse_impl(text, position, nullptr, Side::eLeft);
   }
 
-  void process_file(std::ifstream& input, SFPairs& pairs)
+  void process_file(std::ifstream& input, std::vector<std::string>& pairs)
   {
     do {
       char buf[5000];
-      input.getline(buf, 5000);      std::string line(buf);
-      pairs.push_back(parse(line));
+      input.getline(buf, 5000);
+      std::string line(buf);
+      pairs.push_back(line);
     } while (!input.eof());
   }
 
@@ -96,17 +97,6 @@ namespace
     retval->right_->parent_ = retval;
     retval->right_->side_ = Side::eRight;
     return retval;
-  }
-
-  std::string dump(SFBasePtr item)
-  {
-    if (item->is_number()) {
-      return std::to_string(std::static_pointer_cast<SFNumber>(item)->number_);
-    }
-    else {
-      std::shared_ptr<SFPair> pair = std::static_pointer_cast<SFPair>(item);
-      return std::string("[") + dump(pair->left_) + "," + dump(pair->right_) + "]";
-    }
   }
 
   bool explode(std::shared_ptr<SFPair> pair, int depth, bool& exploded)
@@ -214,37 +204,11 @@ int main()
     return 1;
   }
   
-//  auto test = parse("[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]");
-//  bool exploded = false;
-//  explode(test, 0, exploded);
-//  std::cout << dump(test) << "\n";
-//  return 1;
-  
-  SFPairs pairs;
-#if 1
+  std::vector<std::string> pairs;
   process_file(input, pairs);
-#else
-  pairs = {
-#if 1
-    parse("[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]"),
-    parse("[[[5,[2,8]],4],[5,[[9,9],0]]]"),
-    parse("[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]"),
-    parse("[[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]"),
-    parse("[[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]"),
-    parse("[[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]"),
-    parse("[[[[5,4],[7,7]],8],[[8,3],8]]"),
-    parse("[[9,3],[[9,9],[6,[4,9]]]]"),
-    parse("[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]"),
-    parse("[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]])"),
-#else
-    parse("[[[[4,3],4],4],[7,[[8,4],9]]]"),
-    parse("[1,1]")
-#endif
-  };
-#endif
-  std::shared_ptr<SFPair> work_pair = pairs[0];
+  std::shared_ptr<SFPair> work_pair = parse(pairs[0]);
   for (int i = 1; i < pairs.size(); ++i) {
-    work_pair = add(work_pair, pairs[i]);
+    work_pair = add(work_pair, parse(pairs[i]));
     while (true) {
       bool exploded = false;
       explode(work_pair, 0, exploded);
@@ -255,6 +219,32 @@ int main()
   }
   
   std::cout << "Part One: " << get_magnitude(work_pair) << "\n";
+  
+  long long best = 0;
+  for (int i = 0; i < pairs.size() - 1; ++i) {
+    for (int j = 1; j < pairs.size(); ++j) {
+      std::shared_ptr<SFPair> work_pair = add(parse(pairs[i]), parse(pairs[j]));
+      while (true) {
+        bool exploded = false;
+        explode(work_pair, 0, exploded);
+        if (!exploded && !split(work_pair)) {
+          break;
+        }
+      }
+      best = std::max(best, get_magnitude(work_pair));
+      
+      work_pair = add(parse(pairs[j]), parse(pairs[i]));
+      while (true) {
+        bool exploded = false;
+        explode(work_pair, 0, exploded);
+        if (!exploded && !split(work_pair)) {
+          break;
+        }
+      }
+      best = std::max(best, get_magnitude(work_pair));
+    }
+  }
+  std::cout << "Part Two: " << best << "\n";
   
   //std::cout << "Part One: " << bitsMachine.version_sum_ << "\n";
   //std::cout << "Part Two: " << result << std::endl;

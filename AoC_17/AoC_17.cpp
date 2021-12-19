@@ -1,137 +1,57 @@
 #include <iostream>
-#include <fstream>
-#include <numeric>
 #include <vector>
-#include <queue>
 
 namespace
 {
-typedef std::queue<char> Bits;
+  int MIN_X = 111;
+  int MAX_X = 161;
+  int MIN_Y = -154;
+  int MAX_Y = -101;
 
-  void process_file(std::ifstream& input, Bits& bits)
+  bool in_target_area(int x, int y)
   {
-    do {
-      char c;
-      input >> c;
-      if (!input.eof()) {
-        int actual;
-        if (c >= '0' && c <= '9') {
-          actual = c - '0';
-        }
-        else {
-          actual = c - 'A' + 10;
-        }
-        bits.push(static_cast<bool>(actual & 8));
-        bits.push(static_cast<bool>(actual & 4));
-        bits.push(static_cast<bool>(actual & 2));
-        bits.push(static_cast<bool>(actual & 1));
-      }
-    } while (!input.eof());
+    return x >= MIN_X && x <= MAX_X && y >= MIN_Y && y <= MAX_Y;
   }
 
-
- struct BitsMachine
- {
-   BitsMachine(Bits bits) : bits_(bits), version_sum_(0) {}
-   
-   char read()
-   {
-     char c = bits_.front();
-     bits_.pop();
-     return c;
-   }
-   
-   int read_number(int bits_to_read)
-   {
-     int retval = 0;
-     while (bits_to_read > 0) {
-       retval += (read() << --bits_to_read);
-     }
-     return retval;
-   }
-   
-   long long read_literal_value()
-   {
-     long long retval = 0;
-     bool is_last_byte = false;
-     do {
-       is_last_byte = (read() == 0);
-       retval <<= 4;
-       retval += read_number(4);
-     }
-     while (!is_last_byte);
-     return retval;
-   }
-
-   long long read_packet()
-   {
-     int version = read_number(3);
-     version_sum_ += version;
-     int type_id = read_number(3);
-     if (type_id == 4) {
-       return read_literal_value();
-     }
-     else {
-       std::vector<long long> subpackets;
-       // Next bit is length type
-       if (read() == 0) {
-         size_t bit_length = read_number(15);
-         size_t read_end = bits_.size() - bit_length;
-         while (bits_.size() != read_end) {
-           subpackets.push_back(read_packet());
-         }
-       }
-       else {
-         int packet_length = read_number(11);
-         for (int i = 0; i < packet_length; ++i) {
-           subpackets.push_back(read_packet());
-         }
-       }
-       switch (type_id)
-       {
-         case 0:
-           return std::accumulate(subpackets.begin(), subpackets.end(), 0ll);
-         case 1:
-           return std::accumulate(subpackets.begin(), subpackets.end(), 1ll, std::multiplies<long long>());
-         case 2:
-           return *std::min_element(subpackets.begin(), subpackets.end());
-         case 3:
-           return *std::max_element(subpackets.begin(), subpackets.end());
-         case 5:
-           return subpackets[0] > subpackets[1];
-         case 6:
-           return subpackets[0] < subpackets[1];
-         case 7:
-           return subpackets[0] == subpackets[1];
-       }
-     }
-     
-     assert(false);
-     
-     return -1;
-   }
-   
-   Bits bits_;
-   int version_sum_;
- };
+  void move_probe(int & x, int & y, int & dx, int & dy)
+  {
+    x  += dx;
+    y  += dy;
+    dx  = std::max(dx - 1, 0);
+    dy -= 1;
+  }
 }
 
-int main()
-{
-  std::ifstream input("AoC_17_input.dat");
-  if (input.fail()) {
-    std::cout << "Didn't find the input file\n";
-    return 1;
+int main(int argc, const char * argv[]) {
+  int max_y = -INT_MAX;
+  std::vector<std::pair<int, int>> hits;
+  // This could probably be better generalized; it currently only works for
+  // negative values of { MIN_Y, MAX_Y }. The maximum value of dy has to be
+  // abs(MIN_Y) - 1; anything higher than that will result in a probe whose
+  // speed is greater than the minimum depth when it returns to zero (so it
+  // would shoot right past the target). Note that the minimum starting dx for
+  // MY input data is actually 15, but I don't know how to calculate that
+  // without applying additional brute force.
+  for (int start_dx = 1; start_dx <= MAX_X; ++start_dx) {
+    for (int start_dy = -MIN_Y - 1; start_dy >= MIN_Y; --start_dy) {
+      int x = 0, y = 0, local_max_y = -INT_MAX;
+      int dx = start_dx, dy = start_dy;
+      while (x <= MAX_X && y >= MIN_Y) {
+        if (dx == 0 && x < MIN_X) {
+          break;
+        }
+        move_probe(x, y, dx, dy);
+        local_max_y = std::max(y, local_max_y);
+        if (in_target_area(x, y)) {
+          max_y = std::max(max_y, local_max_y);
+          hits.push_back({ start_dx, start_dy });
+          break;
+        }
+      }
+    }
   }
   
-  Bits bits;
-  process_file(input, bits);
-  BitsMachine bitsMachine(bits);
-  
-  long long result = bitsMachine.read_packet();
-  
-  std::cout << "Part One: " << bitsMachine.version_sum_ << "\n";
-  std::cout << "Part Two: " << result << std::endl;
-  
+  std::cout << "Part One: " << max_y << "\n";
+  std::cout << "Part Two: " << hits.size() << "\n";
   return 0;
 }

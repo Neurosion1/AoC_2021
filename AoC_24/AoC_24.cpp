@@ -3,6 +3,7 @@
 #include <sstream>
 #include <numeric>
 #include <queue>
+#include <map>
 
 namespace
 {
@@ -33,15 +34,17 @@ namespace
       
     }
     
-    bool set(const std::string& input)
+    //bool set(const std::string& input)
+    bool set(int input)
     {
-      std::queue<char>().swap(input_);
-      for (char c : input) {
-        if (c == '0') {
-          return false;
-        }
-        input_.push(c);
-      }
+      input_ = input;
+//      std::queue<char>().swap(input_);
+//      for (char c : input) {
+//        if (c == '0') {
+//          return false;
+//        }
+//        input_.push(c);
+//      }
       w_ = 0;
       x_ = 0;
       y_ = 0;
@@ -57,7 +60,8 @@ namespace
     }
     
     long long w_, x_, y_, z_;
-    std::queue<char> input_;
+    //std::queue<char> input_;
+    int input_;
     std::vector<Operation *> program_;
   };
 
@@ -196,9 +200,9 @@ struct InpOperation : public Operation
   InpOperation(char variable) : variable_(variable) {}
   void execute(ArithmeticLogicUnit * unit) override
   {
-    assert(!unit->input_.empty());
-    int input = unit->input_.front() - '0';
-    unit->input_.pop();
+    //assert(!unit->input_.empty());
+    int input = unit->input_;
+    //unit->input_.pop();
     switch (variable_) {
       case 'w':
         unit->w_ = input;
@@ -240,6 +244,42 @@ private:
     }
     char c_;
   };
+
+  void test(std::stack<int>& result, const std::vector<std::vector<Operation *>>& commands_by_input,
+          int test_index, long long target_z)
+  {
+    ArithmeticLogicUnit unit(commands_by_input[test_index]);
+    std::multimap<char, long long, std::greater<char>> matches;
+    for (int z = -1000000; z < 1000000; ++z) {
+      for (int w = 9; w > 0; --w) {
+        unit.set(w);
+        unit.z_ = z;
+        unit.run();
+        if (unit.z_ == target_z) {
+          if (test_index == 0) {
+            if (z == 0) {
+              std::stack<int> copy = result;
+              while (!copy.empty()) {
+                std::cout << copy.top();
+                copy.pop();
+              }
+              std::cout << "\n";
+              result.pop();
+              return;
+            }
+          }
+          else {
+            matches.insert( { w, z });
+          }
+        }
+      }
+    }
+    for (auto match : matches) {
+      result.push(match.first);
+      test(result, commands_by_input, test_index - 1, match.second);
+    }
+    result.pop();
+  }
 }
 
 int main()
@@ -251,6 +291,7 @@ int main()
   }
   
   std::vector<Operation *> commands;
+  std::vector<std::vector<Operation *>> commands_by_input;
   do {
     char buf[5000];
     input.getline(buf, 5000);
@@ -258,6 +299,10 @@ int main()
     std::string command;
     string_input >> command;
     if (command == "inp") {
+      if (!commands.empty()) {
+        commands_by_input.push_back(commands);
+      }
+      std::vector<Operation*>().swap(commands);
       char variable;
       string_input >> variable;
       commands.push_back(new InpOperation(variable));
@@ -293,19 +338,10 @@ int main()
       commands.push_back(op);
     }
   } while (!input.eof());
+  commands_by_input.push_back(commands);
   
-  ArithmeticLogicUnit unit(commands);
-  
-  for (int z = -10000000; z < 10000000; ++z) {
-    for (char w = '1'; w <= '9'; ++w) {
-      unit.set(std::string(1, w));
-      unit.z_ = z;
-      unit.run();
-      if (unit.z_ == 12) {
-        std::cout << "Z: " << z << " W: " << w << "\n";
-      }
-    }
-  }
+  std::stack<int> result;
+  test(result, commands_by_input, commands_by_input.size() - 1, 0);
   
   return 0;
 }

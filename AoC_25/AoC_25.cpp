@@ -15,37 +15,37 @@ namespace
     } while (!input.eof());
   }
 
-  bool move(std::vector<std::string>& start_herds)
+  bool move(std::vector<std::string>& herds)
   {
     bool something_moved = false;
-    size_t length = start_herds.size(), width = start_herds[0].size();
-    std::string row(start_herds[0].size(), '.');
-    std::vector<std::string> east_herds(start_herds.size(), row);
+    size_t length = herds.size(), width = herds[0].size();
+    std::string row(herds[0].size(), '.');
+    std::vector<std::string> work_herds(herds.size(), row);
     
     for (size_t i = 0; i < length; ++i) {
       for (size_t j = 0; j < width; ++j) {
-        if (start_herds[i][j] == '>' && start_herds[i][(j + 1) % width] == '.') {
-          east_herds[i][(j + 1) % width] = '>';
-          east_herds[i][j] = '.';
-          start_herds[i][(j + 1) % width] = 'X';
+        if (herds[i][j] == '>' && herds[i][(j + 1) % width] == '.') {
+          work_herds[i][(j + 1) % width] = '>';
+          work_herds[i][j] = '.';
+          herds[i][(j + 1) % width] = 'X';
           something_moved = true;
         }
-        else if (start_herds[i][j] != 'X'){
-          east_herds[i][j] = start_herds[i][j];
+        else if (herds[i][j] != 'X'){
+          work_herds[i][j] = herds[i][j];
         }
       }
     }
     
     for (size_t i = 0; i < length; ++i) {
       for (size_t j = 0; j < width; ++j) {
-        if (east_herds[i][j] == 'v' && east_herds[(i + 1) % length][j] == '.') {
-          start_herds[(i + 1) % length][j] = 'v';
-          start_herds[i][j] = '.';
-          east_herds[(i + 1) % length][j] = 'X';
+        if (work_herds[i][j] == 'v' && work_herds[(i + 1) % length][j] == '.') {
+          herds[(i + 1) % length][j] = 'v';
+          herds[i][j] = '.';
+          work_herds[(i + 1) % length][j] = 'X';
           something_moved = true;
         }
-        else if (east_herds[i][j] != 'X') {
-          start_herds[i][j] = east_herds[i][j];
+        else if (work_herds[i][j] != 'X') {
+          herds[i][j] = work_herds[i][j];
         }
       }
     }

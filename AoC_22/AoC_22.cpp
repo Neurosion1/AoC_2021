@@ -1,9 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <numeric>
-#include <vector>
 #include <sstream>
-#include <array>
+#include <numeric>
 #include <list>
 
 namespace
@@ -85,7 +83,8 @@ namespace
       segments_.splice(segments_.end(), new_segments);
     }
     
-    void add_segment(const Range& addition) {
+    void add_segment(const Range& addition)
+    {
       subtract_segment(addition);
       segments_.push_back(addition);
     }

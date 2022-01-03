@@ -18,9 +18,6 @@
     <ClCompile Include="AoC_18.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AoC_18_big_mess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="AoC_18_input.dat" />

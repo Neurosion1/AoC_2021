@@ -5,6 +5,10 @@
 #include <queue>
 #include <map>
 
+#ifdef _MSC_VER
+#include <assert.h>
+#endif
+
 namespace
 {
   struct ArithmeticLogicUnit;
@@ -29,7 +33,7 @@ namespace
   struct ArithmeticLogicUnit
   {
     ArithmeticLogicUnit(const std::vector<Operation *>& program)
-    : program_(program)
+    : program_(program), w_(0), x_(0), y_(0), z_(0)
     {
       
     }

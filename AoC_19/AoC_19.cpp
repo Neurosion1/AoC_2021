@@ -8,6 +8,10 @@
 #include <list>
 #include <unordered_map>
 
+#ifdef _MSC_VER
+#include <assert.h>
+#endif
+
 namespace
 {
   struct Point3D

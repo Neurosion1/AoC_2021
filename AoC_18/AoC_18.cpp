@@ -6,6 +6,10 @@
 #include <memory>
 #include <algorithm>
 
+#ifdef _MSC_VER
+#include <assert.h>
+#endif
+
 namespace
 {
   struct SFBase;

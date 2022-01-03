@@ -4,6 +4,10 @@
 #include <vector>
 #include <queue>
 
+#ifdef _MSC_VER
+#include <assert.h>
+#endif
+
 namespace
 {
 typedef std::queue<char> Bits;

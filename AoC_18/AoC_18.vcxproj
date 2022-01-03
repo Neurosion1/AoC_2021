@@ -99,7 +99,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AoC_18.cpp" />
-    <ClCompile Include="AoC_18_big_mess.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AoC_18_input.dat" />

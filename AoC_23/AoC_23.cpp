@@ -7,6 +7,10 @@
 #include <deque>
 #include <array>
 
+#ifdef _MSC_VER
+#include <assert.h>
+#endif
+
 namespace
 {
   struct Shell;

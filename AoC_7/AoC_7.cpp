@@ -53,6 +53,9 @@ int main()
   // Another fascinating reddit observation. The ideal position for
   // part one is always the median. The ideal position for part two
   // is always the mean.
+  // UPDATE: Well, not ALWAYS the mean. It turns out it will be the
+  //         mean rounded either up or down to a whole number, and
+  //         not necessarily even the SAME whole number.
   std::sort(crablist.begin(), crablist.end());
   int part_1_position = crablist[crablist.size() / 2];
   int part_2_position = std::accumulate(crablist.begin(), crablist.end(), 0l)  / crablist.size();
